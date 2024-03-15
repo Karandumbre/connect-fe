@@ -1,15 +1,12 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import Popover from '@mui/material/Popover';
 import { alpha } from '@mui/material/styles';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import { Box, Avatar, Divider, Popover, MenuItem, Typography, IconButton } from '@mui/material';
 
 import { account } from 'src/_mock/account';
+// store
+import { logOut } from 'src/store/reducers/login';
 
 // ----------------------------------------------------------------------
 
@@ -30,8 +27,9 @@ const MENU_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover() {
+export const AccountPopover = () => {
   const [open, setOpen] = useState(null);
+  const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -74,12 +72,14 @@ export default function AccountPopover() {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 0,
-            mt: 1,
-            ml: 0.75,
-            width: 200,
+        slotProps={{
+          paper: {
+            sx: {
+              p: 0,
+              mt: 1,
+              ml: 0.75,
+              width: 200,
+            },
           },
         }}
       >
@@ -105,7 +105,10 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={() => {
+            handleClose();
+            dispatch(logOut());
+          }}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
@@ -113,4 +116,4 @@ export default function AccountPopover() {
       </Popover>
     </>
   );
-}
+};
