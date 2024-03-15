@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { useSelector } from 'react-redux';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
@@ -10,28 +11,30 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
-// ----------------------------------------------------------------------
-
 export default function Router() {
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+
   const routes = useRoutes([
     {
-      element: (
+      element: isLoggedIn ? (
         <DashboardLayout>
-          <Suspense>
+          <Suspense fallback={<div>Loading...</div>}>
             <Outlet />
           </Suspense>
         </DashboardLayout>
+      ) : (
+        <Navigate to="/login" replace />
       ),
       children: [
         { element: <IndexPage />, index: true },
-        { path: 'user', element: <UserPage /> },
+        { path: 'home', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
     {
       path: 'login',
-      element: <LoginPage />,
+      element: !isLoggedIn ? <LoginPage /> : <Navigate to="/" replace />,
     },
     {
       path: '404',

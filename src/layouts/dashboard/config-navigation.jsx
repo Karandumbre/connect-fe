@@ -1,3 +1,5 @@
+import { Forum, Group, Groups } from '@mui/icons-material';
+
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -13,30 +15,30 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'user',
+    title: 'Collaborations & Projects',
     path: '/user',
-    icon: icon('ic_user'),
+    icon: <Groups />,
   },
   {
-    title: 'product',
+    title: 'Messages & Chats',
     path: '/products',
-    icon: icon('ic_cart'),
+    icon: <Forum />,
   },
   {
-    title: 'blog',
+    title: 'Profile & Portfolio',
     path: '/blog',
-    icon: icon('ic_blog'),
+    icon: <Group />,
   },
   {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
+    title: 'Settings',
+    path: '/settings',
+    icon: <Group />,
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;

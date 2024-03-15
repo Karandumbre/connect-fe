@@ -12,7 +12,7 @@ import { customShadows } from './custom-shadows';
 
 // ----------------------------------------------------------------------
 
-export default function ThemeProvider({ children }) {
+export const ThemeProvider = ({ children }) => {
   const memoizedValue = useMemo(
     () => ({
       palette: palette(),
@@ -34,7 +34,7 @@ export default function ThemeProvider({ children }) {
       {children}
     </MUIThemeProvider>
   );
-}
+};
 
 ThemeProvider.propTypes = {
   children: PropTypes.node,
