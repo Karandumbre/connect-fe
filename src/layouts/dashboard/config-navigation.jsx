@@ -8,6 +8,12 @@ const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
 
+// const SIDEBAR_MENU_CONSTANTS = {
+//   dashboard:'dashboard',
+//   user:'user'
+//   products:'products',
+// }
+
 const navConfig = [
   {
     title: 'dashboard',
@@ -15,10 +21,20 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
+    title: 'Marketplace',
+    path: '/marketplace',
+    icon: <Groups />,
+  },
+  {
     title: 'Collaborations & Projects',
     path: '/user',
     icon: <Groups />,
   },
+  // {
+  //   title: 'User',
+  //   path: '/user',
+  //   icon: <Groups />,
+  // },
   {
     title: 'Messages & Chats',
     path: '/products',
@@ -34,11 +50,11 @@ const navConfig = [
     path: '/settings',
     icon: <Group />,
   },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: icon('ic_disabled'),
-  // },
+  {
+    title: 'Not found',
+    path: '/404',
+    icon: icon('ic_disabled'),
+  },
 ];
 
 export default navConfig;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 import { Form, Field, Formik } from 'formik';
 
@@ -29,24 +30,29 @@ import { LOGIN_ENDPOINT } from 'src/constants/api-endpoints.constants';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
+import SignUpDialog from './signup-view';
 import { validationSchema } from './validation';
 
 const RenderForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch();
 
-  const setAccessTokenOnSubmit = (values) => {
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const setAccessTokenOnSubmit = (values, setSubmitting) => {
     dispatch(startLoading);
     postData(LOGIN_ENDPOINT, values)
       .then((res) => {
         storageService.setToken(res.data);
+        dispatch(logIn());
+        router.push('/home');
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(({ response }) => {
+        enqueueSnackbar(response.data.error, { variant: 'error' });
       })
       .finally(() => {
         dispatch(stopLoading);
+        setSubmitting(false);
       });
   };
 
@@ -56,10 +62,7 @@ const RenderForm = () => {
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
-          setAccessTokenOnSubmit(values);
-          dispatch(logIn());
-          router.push('/home');
-          setSubmitting(false);
+          setAccessTokenOnSubmit(values, setSubmitting);
         }, 400);
       }}
     >
@@ -121,7 +124,17 @@ const RenderForm = () => {
 
 export default function LoginView() {
   const theme = useTheme();
+  const [openSignupModal, setOpenSignupModal] = useState(false);
 
+  const handleOpenSignupModal = () => {
+    // Open the sign up dialog
+    setOpenSignupModal(true);
+  };
+
+  const handleCloseSignupModal = () => {
+    // Close the sign up dialog
+    setOpenSignupModal(false);
+  };
   return (
     <Box
       sx={{
@@ -151,17 +164,16 @@ export default function LoginView() {
           <Typography variant="h4">Sign in to Zyncup</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
+            Don&apos;t have an account?
+            <Link variant="subtitle2" sx={{ ml: 0.5 }} onClick={handleOpenSignupModal}>
               Get started
             </Link>
           </Typography>
 
-          {/* Other elements remain unchanged */}
-
           <RenderForm />
         </Card>
       </Stack>
+      <SignUpDialog open={openSignupModal} onClose={handleCloseSignupModal} />
     </Box>
   );
 }
