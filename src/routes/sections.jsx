@@ -10,6 +10,7 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const Marketplace = lazy(() => import('src/pages/marketplace'));
 
 export default function Router() {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -27,7 +28,8 @@ export default function Router() {
       ),
       children: [
         { element: <IndexPage />, index: true },
-        { path: 'home', element: <UserPage /> },
+        { path: 'marketplace', element: <Marketplace /> },
+        { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
