@@ -1,29 +1,33 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
 
-// import Button from '@mui/material/Button';
-import { alpha } from '@mui/material/styles';
 import { MenuOpen } from '@mui/icons-material';
-import { Box, Stack, Drawer, Avatar, ListItem, Typography } from '@mui/material';
+import {
+  Box,
+  List,
+  alpha,
+  Stack,
+  Avatar,
+  Drawer,
+  ListItem,
+  Collapse,
+  Typography,
+} from '@mui/material';
 
-import { usePathname } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
-
+import { usePathname } from 'src/routes/hooks'; // Ensure this hook is correctly implemented or adjusted as needed
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
 
-import Logo from 'src/components/logo';
+import { Logo } from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
-import { NAV } from './config-layout';
-import navConfig from './config-navigation';
-
-// ----------------------------------------------------------------------
+import { NAV } from '../constants/config-layout';
+import navConfig from '../constants/config-navigation';
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
-
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -50,7 +54,6 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
-
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
         </Typography>
@@ -82,9 +85,7 @@ export default function Nav({ openNav, onCloseNav }) {
         {!upLg && <MenuOpen sx={{ mr: 4, mt: 3, cursor: 'pointer' }} onClick={onCloseNav} />}
       </Box>
       {renderAccount}
-
       {renderMenu}
-
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );
@@ -125,47 +126,74 @@ export default function Nav({ openNav, onCloseNav }) {
 }
 
 Nav.propTypes = {
-  openNav: PropTypes.bool,
-  onCloseNav: PropTypes.func,
+  openNav: PropTypes.bool.isRequired,
+  onCloseNav: PropTypes.func.isRequired,
 };
 
 // ----------------------------------------------------------------------
 
 function NavItem({ item }) {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
-
+  const hasChildren = item.children && item.children.length > 0;
   const active = item.path === pathname;
 
-  return (
-    <ListItem
-      component={RouterLink}
-      href={item.path}
-      sx={{
-        minHeight: 44,
-        borderRadius: 0.75,
-        typography: 'body2',
-        color: 'text.secondary',
-        textTransform: 'capitalize',
-        fontWeight: 'fontWeightMedium',
-        ...(active && {
-          color: 'primary.main',
-          fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-          '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
-          },
-        }),
-      }}
-    >
-      <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-        {item.icon}
-      </Box>
+  const handleClick = () => {
+    if (hasChildren) setOpen(!open);
+  };
 
-      <Box component="span">{item.title} </Box>
-    </ListItem>
+  return (
+    <>
+      <ListItem
+        component={RouterLink}
+        to={item.path}
+        onClick={handleClick}
+        sx={{
+          minHeight: 44,
+          borderRadius: 0.75,
+          typography: 'body2',
+          color: 'text.secondary',
+          textTransform: 'capitalize',
+          fontWeight: 'fontWeightMedium',
+          ...(active && {
+            color: 'primary.main',
+            fontWeight: 'fontWeightSemiBold',
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+            '&:hover': {
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+            },
+          }),
+        }}
+      >
+        <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
+          {item.icon}
+        </Box>
+
+        <Box component="span">{item.title}</Box>
+      </ListItem>
+      {hasChildren && (
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {item.children.map((child) => (
+              <NavItem key={child.title} item={{ ...child, path: `${item.path}${child.path}` }} />
+            ))}
+          </List>
+        </Collapse>
+      )}
+    </>
   );
 }
 
 NavItem.propTypes = {
-  item: PropTypes.object,
+  item: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
+    icon: PropTypes.node,
+    children: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        path: PropTypes.string.isRequired,
+      })
+    ),
+  }),
 };

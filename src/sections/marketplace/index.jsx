@@ -4,9 +4,12 @@ import { Box } from '@mui/material';
 
 import CompanyDetails from 'src/sections/marketplace/company-details';
 
+import { RequestDialog } from './request';
+
 export default function MarketPlaceView() {
   return (
     <Box>
+      <RequestDialog />
       <CompanyDetails
         src="/assets/microsoft.png"
         title="Microsoft"

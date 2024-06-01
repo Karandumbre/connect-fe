@@ -2,15 +2,21 @@ import { lazy, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
-import DashboardLayout from 'src/layouts/dashboard';
+import { Layout } from 'src/layout';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
-export const ProductsPage = lazy(() => import('src/pages/products'));
+export const MessagePage = lazy(() => import('src/pages/messages'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Marketplace = lazy(() => import('src/pages/marketplace'));
+export const Settings = lazy(() => import('src/pages/settings'));
+
+// Lazy load each component
+const ProfileManagement = lazy(() => import('src/pages/settings/profile-management'));
+const AccountSettings = lazy(() => import('src/pages/settings/account-settings'));
+const BillingSubscription = lazy(() => import('src/pages/settings/billing-subscription'));
+const SecuritySettings = lazy(() => import('src/pages/settings/security-settings'));
 
 export default function Router() {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -18,11 +24,11 @@ export default function Router() {
   const routes = useRoutes([
     {
       element: isLoggedIn ? (
-        <DashboardLayout>
+        <Layout>
           <Suspense fallback={<div>Loading...</div>}>
             <Outlet />
           </Suspense>
-        </DashboardLayout>
+        </Layout>
       ) : (
         <Navigate to="/login" replace />
       ),
@@ -30,8 +36,18 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'marketplace', element: <Marketplace /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        { path: 'messages', element: <MessagePage /> },
+        {
+          path: 'settings',
+          element: <Settings />,
+          children: [
+            { path: '', element: <Navigate to="profile" replace /> },
+            { path: 'profile', element: <ProfileManagement /> },
+            { path: 'account', element: <AccountSettings /> },
+            { path: 'billing', element: <BillingSubscription /> },
+            { path: 'security', element: <SecuritySettings /> },
+          ],
+        },
       ],
     },
     {

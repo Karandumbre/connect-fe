@@ -9,7 +9,7 @@ import Header from './header';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout({ children }) {
+export const Layout = ({ children }) => {
   const [openNav, setOpenNav] = useState(false);
 
   return (
@@ -29,8 +29,8 @@ export default function DashboardLayout({ children }) {
       </Box>
     </>
   );
-}
+};
 
-DashboardLayout.propTypes = {
+Layout.propTypes = {
   children: PropTypes.node,
 };

@@ -17,7 +17,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  DialogContentText,
 } from '@mui/material';
+
+import { LISTING_POP_TYPE } from 'src/constants/listing.constants';
 
 // Validation Schema
 const proposalValidationSchema = Yup.object({
@@ -32,7 +35,8 @@ const proposalValidationSchema = Yup.object({
     .test('fileFormat', 'Unsupported Format', (value) => value && value.type === 'application/pdf'),
 });
 
-const SendProposal = ({ open, handleClose }) => {
+const SendProposal = (props) => {
+  const { open, handleClose, type } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -51,8 +55,8 @@ const SendProposal = ({ open, handleClose }) => {
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle id="form-dialog-title">
-        Send Proposal
+      <DialogTitle sx={{ pb: 0 }}>
+        {type === LISTING_POP_TYPE.SEND_PROPOSAL ? 'Send Proposal' : 'Create Listing'}
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -74,6 +78,12 @@ const SendProposal = ({ open, handleClose }) => {
         {({ isSubmitting, setFieldValue, errors, touched }) => (
           <Form>
             <DialogContent>
+              {LISTING_POP_TYPE.CREATE_LISTING === type && (
+                <DialogContentText mb={2}>
+                  Please provide detailed information about your project so we can match you with
+                  the best companies.
+                </DialogContentText>
+              )}
               <Stack spacing={3}>
                 <Field
                   as={TextField}
@@ -160,9 +170,14 @@ const SendProposal = ({ open, handleClose }) => {
   );
 };
 
+SendProposal.defaultProps = {
+  type: LISTING_POP_TYPE.SEND_PROPOSAL,
+};
+
 SendProposal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  type: PropTypes.string,
 };
 
 export default SendProposal;

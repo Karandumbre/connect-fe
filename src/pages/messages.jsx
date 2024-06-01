@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { ProductsView } from 'src/sections/products/view';
+import { Message } from 'src/sections/message';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function MessagePage() {
   return (
     <>
       <Helmet>
-        <title> Products | Minimal UI </title>
+        <title> Evermont chat </title>
       </Helmet>
 
-      <ProductsView />
+      <Message />
     </>
   );
 }

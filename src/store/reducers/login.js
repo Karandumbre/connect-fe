@@ -12,7 +12,7 @@ const resetAppUserState = () => {
 
 // Define the initialState for the slice
 const initialState = {
-  isLoggedIn: storageService.getAccessToken() || false,
+  isLoggedIn: storageService.getAccessToken() || true,
 };
 
 // Create a slice for the isLoggedIn state with reducers to handle actions
