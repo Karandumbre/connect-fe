@@ -14,9 +14,8 @@ export const Settings = lazy(() => import('src/pages/settings'));
 
 // Lazy load each component
 const ProfileManagement = lazy(() => import('src/pages/settings/profile-management'));
-const AccountSettings = lazy(() => import('src/pages/settings/account-settings'));
+const CompanySettings = lazy(() => import('src/pages/settings/company'));
 const BillingSubscription = lazy(() => import('src/pages/settings/billing-subscription'));
-const SecuritySettings = lazy(() => import('src/pages/settings/security-settings'));
 
 export default function Router() {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -40,12 +39,12 @@ export default function Router() {
         {
           path: 'settings',
           element: <Settings />,
+          exact: true,
           children: [
             { path: '', element: <Navigate to="profile" replace /> },
             { path: 'profile', element: <ProfileManagement /> },
-            { path: 'account', element: <AccountSettings /> },
+            { path: 'company', element: <CompanySettings /> },
             { path: 'billing', element: <BillingSubscription /> },
-            { path: 'security', element: <SecuritySettings /> },
           ],
         },
       ],

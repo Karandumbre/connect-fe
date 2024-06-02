@@ -39,9 +39,8 @@ const navConfig = [
     icon: <Group />,
     children: [
       { title: 'Profile Management', path: '/profile' },
-      { title: 'Account Settings', path: '/account' },
+      { title: 'Company Settings', path: '/company' },
       { title: 'Billing & Subscription', path: '/billing' },
-      { title: 'Security Settings', path: '/security' },
     ],
   },
 ];

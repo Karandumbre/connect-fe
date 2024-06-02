@@ -133,21 +133,15 @@ Nav.propTypes = {
 // ----------------------------------------------------------------------
 
 function NavItem({ item }) {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const hasChildren = item.children && item.children.length > 0;
   const active = item.path === pathname;
-
-  const handleClick = () => {
-    if (hasChildren) setOpen(!open);
-  };
 
   return (
     <>
       <ListItem
         component={RouterLink}
         to={item.path}
-        onClick={handleClick}
         sx={{
           minHeight: 44,
           borderRadius: 0.75,
@@ -172,7 +166,7 @@ function NavItem({ item }) {
         <Box component="span">{item.title}</Box>
       </ListItem>
       {hasChildren && (
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {item.children.map((child) => (
               <NavItem key={child.title} item={{ ...child, path: `${item.path}${child.path}` }} />

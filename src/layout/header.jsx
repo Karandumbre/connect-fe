@@ -10,12 +10,12 @@ import IconButton from '@mui/material/IconButton';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { bgBlur } from 'src/theme/css';
+import { NAV, HEADER } from 'src/constants/config-layout';
 
 import Iconify from 'src/components/iconify';
 
 import Searchbar from './common/searchbar';
 import LanguagePopover from './common/language-popover';
-import { NAV, HEADER } from '../constants/config-layout';
 import { AccountPopover } from './common/account-popover';
 import NotificationsPopover from './common/notifications-popover';
 
