@@ -10,9 +10,17 @@ const resetAppUserState = () => {
   return initialState;
 };
 
+const checkValidAccessToken = () => {
+  const token = storageService.getAccessToken();
+  if (token === null || token === undefined || token === 'undefined' || token === '') {
+    return false;
+  }
+  return true;
+};
+
 // Define the initialState for the slice
 const initialState = {
-  isLoggedIn: storageService.getAccessToken() || true,
+  isLoggedIn: checkValidAccessToken() || false,
 };
 
 // Create a slice for the isLoggedIn state with reducers to handle actions

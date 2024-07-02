@@ -76,7 +76,17 @@ const SendProposal = (props) => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting, setFieldValue, errors, touched }) => (
-          <Form>
+          <Form
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%',
+              '@media (min-width: 600px)': {
+                flexDirection: 'row',
+              },
+            }}
+          >
             <DialogContent>
               {LISTING_POP_TYPE.CREATE_LISTING === type && (
                 <DialogContentText mb={2}>

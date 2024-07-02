@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useResponsive } from 'src/hooks/use-responsive'; // Assuming this is the correct import path
 import { TabList, TabPanel, TabContext } from '@mui/lab';
 import { ArrowForwardRounded } from '@mui/icons-material';
 import {
@@ -10,13 +9,17 @@ import {
   Tab,
   Stack,
   Button,
+  MenuItem,
   Accordion,
   Typography,
+  FormControl,
   AccordionDetails,
   AccordionSummary,
 } from '@mui/material';
 
-import { data } from 'src/_mock/company-details';
+import { getData } from 'src/routes/api';
+
+import { CustomTextField as TextField } from 'src/pages/settings/label';
 
 import TeamPage from './teams';
 import Portfolio from './portfolio';
@@ -27,48 +30,107 @@ import ListCompanyService from './list-component';
 import RatingsReviews from './reviews-and-ratings';
 // ----------------------------------------------------------------------
 
-function LabTabs() {
+function LabTabs({ isMobile }) {
   const [value, setValue] = useState('1');
-  const handleChange = (event, newValue) => setValue(newValue);
+  const [tabData, setTabData] = useState([]);
+  const [error, setError] = useState(null);
+
+  const getSellerData = async () => {
+    try {
+      const response = await getData('api/v1/seller/1');
+      const { data } = response;
+
+      const updated = [
+        { label: 'Services Offered', component: <ListCompanyService data={data.services} /> },
+        { label: 'Portfolio and Case Studies', component: <Portfolio data={data.portfolio} /> },
+        { label: 'Ratings and Review', component: <RatingsReviews data={data.ratings} /> },
+        { label: 'Pricing Information', component: <Pricing pricing={data.pricing} /> },
+        {
+          label: 'Team and Expertise',
+          component: <TeamPage team={data.team} certificationsAwards={data.certificationsAwards} />,
+        },
+        {
+          label: 'Social Proof and Associations',
+          component: (
+            <SocialProofPage
+              memberships={data.memberships}
+              socialMediaLinks={data.socialMediaLinks}
+            />
+          ),
+        },
+      ];
+
+      setTabData(updated);
+    } catch {
+      console.log('Error fetching data');
+      setError('Error fetching data');
+    }
+  };
+
+  useEffect(() => {
+    getSellerData();
+  }, []);
+  const handleChange = (event, newValue) => {
+    if (isMobile) {
+      setValue(event.target.value);
+    } else {
+      setValue(newValue);
+    }
+  };
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Services Offered" value="1" />
-            <Tab label="Portfolio and Case Studies" value="2" />
-            <Tab label="Ratings and Review" value="3" />
-            <Tab label="Pricing Information" value="4" />
-            <Tab label="Team and Expertise" value="5" />
-            <Tab label="Social Proof and Associations" value="8" />\{' '}
-          </TabList>
-        </Box>
-        <TabPanel value="1">
-          <ListCompanyService data={data.services} />
-        </TabPanel>
-        <TabPanel value="2">
-          <Portfolio data={data.portfolio} />
-        </TabPanel>
-        <TabPanel value="3">
-          <RatingsReviews data={data.ratings} />
-        </TabPanel>
-        <TabPanel value="4">
-          <Pricing pricing={data.pricing} />
-        </TabPanel>
-        <TabPanel value="5">
-          <TeamPage team={data.team} certificationsAwards={data.certificationsAwards} />
-        </TabPanel>
-        <TabPanel value="8">
-          <SocialProofPage
-            memberships={data.memberships}
-            socialMediaLinks={data.socialMediaLinks}
-          />
-        </TabPanel>
-      </TabContext>
+      {tabData.length ? (
+        <TabContext value={value}>
+          {isMobile ? (
+            <Box>
+              <FormControl fullWidth>
+                <TextField
+                  select
+                  value={value}
+                  onChange={handleChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  {tabData.map((tab, index) => (
+                    <MenuItem key={index} value={(index + 1).toString()}>
+                      {tab.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </FormControl>
+              <TabPanel sx={{ padding: 0 }} value={value}>
+                {tabData[parseInt(value, 10) - 1].component}
+              </TabPanel>
+            </Box>
+          ) : (
+            <>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                  {tabData.map((tab, index) => (
+                    <Tab key={index} label={tab.label} value={(index + 1).toString()} />
+                  ))}
+                </TabList>
+              </Box>
+              {tabData.map((tab, index) => (
+                <TabPanel key={index} value={(index + 1).toString()}>
+                  {tab.component}
+                </TabPanel>
+              ))}
+            </>
+          )}
+        </TabContext>
+      ) : (
+        <></>
+      )}
     </Box>
   );
 }
+
+LabTabs.propTypes = {
+  isMobile: PropTypes.bool,
+};
+
 export default function CompanyDetails({
   title,
   description,
@@ -78,8 +140,7 @@ export default function CompanyDetails({
   ...other
 }) {
   const [openProposalModal, setOpenProposalModal] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useResponsive('down', 'sm'); // Using the custom hook
   const isDesktop = !isMobile;
 
   const handleOpenProposalModalState = () => setOpenProposalModal(true);
@@ -187,7 +248,7 @@ export default function CompanyDetails({
           }}
         >
           <Typography variant="body2">
-            <LabTabs />
+            <LabTabs isMobile={isMobile} />
           </Typography>
         </AccordionDetails>
       </Accordion>

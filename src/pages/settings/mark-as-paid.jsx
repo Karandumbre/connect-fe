@@ -11,14 +11,9 @@ import {
   DialogActions,
 } from '@mui/material';
 
-import { Label, CustomTextField as TextField } from './label';
+import { PAYMENT_DATA } from 'src/constants/settings.constants';
 
-const paymentData = [
-  { id: 1, paymentID: 'PAY001' },
-  { id: 2, paymentID: 'PAY002' },
-  { id: 3, paymentID: 'PAY003' },
-  { id: 4, paymentID: 'PAY004' },
-];
+import { Label, CustomTextField as TextField } from './label';
 
 export const MarkAsPaid = () => {
   const [open, setOpen] = useState(false);
@@ -54,11 +49,18 @@ export const MarkAsPaid = () => {
       </Button>
       <Dialog
         open={open}
-        sx={{ '& .MuiDialog-paper': { minWidth: 350 } }}
         onClose={(event, reason) => {
           if (reason !== 'backdropClick') {
             handleClose();
           }
+        }}
+        PaperProps={{
+          sx: {
+            width: ['100%', 400],
+            margin: [0, 'initial'],
+            height: ['100%', 'initial'],
+            maxHeight: ['100%', 'initial'],
+          },
         }}
       >
         <DialogTitle display="flex" alignItems="center" justifyContent="space-between">
@@ -75,9 +77,9 @@ export const MarkAsPaid = () => {
           <FormControl fullWidth sx={{ mt: 2 }}>
             <Label>Select payment ID</Label>
             <TextField select value={selectedPaymentId} onChange={handleChange}>
-              {paymentData.map((payment) => (
+              {PAYMENT_DATA.filter((payment) => payment.status !== 'PAID').map((payment) => (
                 <MenuItem key={payment.id} value={payment.paymentID}>
-                  {payment.paymentID}
+                  {payment.paymentID} - {payment.clientName} - {payment.status} - {payment.amount}
                 </MenuItem>
               ))}
             </TextField>

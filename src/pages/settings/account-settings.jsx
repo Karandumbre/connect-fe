@@ -38,18 +38,17 @@ const AccountSettings = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <Box sx={{ p: 3, pt: 0 }}>
+            <Box sx={{ p: 2 }}>
               <Heading title="Account Management" />
 
-              {/* Password Fields */}
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <Label isRequired labelBold>
                     Current Password
                   </Label>
                   <TextField type="password" name="currentPassword" fullWidth />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <Label isRequired labelBold>
                     New Password
                   </Label>
@@ -63,9 +62,8 @@ const AccountSettings = () => {
                 </Grid>
               </Grid>
 
-              {/* Notification Settings */}
               <Box mt={4}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
                   Notification Settings
                 </Typography>
                 <FormControlLabel
@@ -77,13 +75,8 @@ const AccountSettings = () => {
                   label="Push Notifications"
                 />
               </Box>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3 }}
-                disabled={isSubmitting}
-              >
+
+              <Button variant="contained" sx={{ mt: 3 }} disabled={isSubmitting}>
                 Save Changes
               </Button>
             </Box>

@@ -43,12 +43,12 @@ const RenderForm = () => {
     dispatch(startLoading);
     postData(LOGIN_ENDPOINT, values)
       .then((res) => {
-        storageService.setToken(res.data);
+        storageService.setToken(res.data.token);
         dispatch(logIn());
         router.push('/home');
       })
       .catch(({ response }) => {
-        enqueueSnackbar(response.data.error, { variant: 'error' });
+        enqueueSnackbar(response.data, { variant: 'error' });
       })
       .finally(() => {
         dispatch(stopLoading);

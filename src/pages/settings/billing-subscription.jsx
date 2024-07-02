@@ -21,11 +21,11 @@ import { MarkAsPaid } from './mark-as-paid';
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'Paid':
+    case 'PAID':
       return 'success';
-    case 'Pending':
+    case 'OPEN':
       return 'warning';
-    case 'Failed':
+    case 'OVERDUE':
       return 'error';
     default:
       return 'default';

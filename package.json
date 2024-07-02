@@ -1,8 +1,8 @@
 {
-  "name": "@minimal/material-kit-react",
-  "author": "minimals.cc",
+  "name": "Evermont.AI",
+  "author": "Evermont",
   "licence": "MIT",
-  "version": "1.8.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
