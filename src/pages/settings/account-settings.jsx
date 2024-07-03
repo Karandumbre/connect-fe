@@ -6,7 +6,7 @@ import { Box, Grid, Button, Switch, Typography, FormControlLabel } from '@mui/ma
 
 import { Section, Heading } from 'src/components';
 
-import { Label, CustomTextField as TextField } from './label'; // Assuming Label is a custom component for styled labels
+import { InputWithError } from './components';
 
 // Validation schema
 const SettingsSchema = Yup.object().shape({
@@ -36,29 +36,38 @@ const AccountSettings = () => {
         validationSchema={SettingsSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, errors, handleChange }) => (
           <Form>
             <Box sx={{ p: 2 }}>
               <Heading title="Account Management" />
 
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Label isRequired labelBold>
-                    Current Password
-                  </Label>
-                  <TextField type="password" name="currentPassword" fullWidth />
+                  <InputWithError
+                    label="Current Password"
+                    name="currentPassword"
+                    type="password"
+                    onChange={handleChange}
+                    errors={errors}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Label isRequired labelBold>
-                    New Password
-                  </Label>
-                  <TextField type="password" name="newPassword" fullWidth />
+                  <InputWithError
+                    label="New Password"
+                    name="newPassword"
+                    type="password"
+                    onChange={handleChange}
+                    errors={errors}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <Label isRequired labelBold>
-                    Confirm New Password
-                  </Label>
-                  <TextField type="password" name="confirmPassword" fullWidth />
+                  <InputWithError
+                    label="Confirm New Password"
+                    name="confirmPassword"
+                    type="password"
+                    onChange={handleChange}
+                    errors={errors}
+                  />
                 </Grid>
               </Grid>
 

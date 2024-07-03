@@ -1,9 +1,10 @@
 // vendor
 import React from 'react';
+import { Field } from 'formik';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { TextField } from '@mui/material';
+import { MenuItem, TextField } from '@mui/material';
 
 const LabelStyled = styled.label`
   display: ${(props) => (props.subTextAlignRightToLabel ? 'flex' : 'inline-block')};
@@ -25,7 +26,7 @@ const LabelStyled = styled.label`
   `}
 `;
 
-function Label(props) {
+export function Label(props) {
   const {
     isRequired,
     children,
@@ -56,8 +57,6 @@ Label.propTypes = {
   helper: PropTypes.node,
 };
 
-export { Label };
-
 export const CustomTextField = styled(TextField)((props) => ({
   '& .MuiInputBase-input': {
     padding: '9px 12px',
@@ -71,3 +70,47 @@ export const CustomTextField = styled(TextField)((props) => ({
     fontSize: '14px',
   },
 }));
+
+export const Error = styled.div`
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+`;
+
+export const InputWithError = ({ name, label, errors, type, onChange, options = [] }) => {
+  if (type === 'dropdown') {
+    return (
+      <>
+        <Label isRequired labelBold>
+          {label}
+        </Label>
+        <Field as={TextField} name={name} fullWidth select>
+          {options.map((option) => (
+            <MenuItem key={option} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Field>
+        {errors[name] && <Error>{errors[name]}</Error>}
+      </>
+    );
+  }
+  return (
+    <>
+      <Label isRequired labelBold>
+        {label}
+      </Label>
+      <Field name={`${name}`} as={TextField} fullWidth onChange={onChange} type={type} />
+      {errors[name] && <Error>{errors[name]}</Error>}
+    </>
+  );
+};
+
+InputWithError.propTypes = {
+  name: PropTypes.string,
+  errors: PropTypes.object,
+  type: PropTypes.string,
+  onChange: PropTypes.func,
+  options: PropTypes.array,
+  label: PropTypes.string,
+};

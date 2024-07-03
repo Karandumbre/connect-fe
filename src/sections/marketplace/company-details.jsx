@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { useResponsive } from 'src/hooks/use-responsive'; // Assuming this is the correct import path
 import { TabList, TabPanel, TabContext } from '@mui/lab';
@@ -19,16 +19,16 @@ import {
 
 import { getData } from 'src/routes/api';
 
-import { CustomTextField as TextField } from 'src/pages/settings/label';
+import { CustomTextField as TextField } from 'src/pages/settings/components';
 
 import TeamPage from './teams';
 import Portfolio from './portfolio';
 import SocialProofPage from './social';
+import { ErrorComponent } from './error';
 import SendProposal from './send-proposal';
 import Pricing from './pricing-information';
 import ListCompanyService from './list-component';
 import RatingsReviews from './reviews-and-ratings';
-// ----------------------------------------------------------------------
 
 function LabTabs({ isMobile }) {
   const [value, setValue] = useState('1');
@@ -37,7 +37,7 @@ function LabTabs({ isMobile }) {
 
   const getSellerData = async () => {
     try {
-      const response = await getData('api/v1/seller/1');
+      const response = await getData('api/v1/companies/1/');
       const { data } = response;
 
       const updated = [
@@ -61,8 +61,8 @@ function LabTabs({ isMobile }) {
       ];
 
       setTabData(updated);
-    } catch {
-      console.log('Error fetching data');
+    } catch (err) {
+      console.error('Error fetching data:', err);
       setError('Error fetching data');
     }
   };
@@ -70,6 +70,7 @@ function LabTabs({ isMobile }) {
   useEffect(() => {
     getSellerData();
   }, []);
+
   const handleChange = (event, newValue) => {
     if (isMobile) {
       setValue(event.target.value);
@@ -80,48 +81,50 @@ function LabTabs({ isMobile }) {
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
-      {tabData.length ? (
-        <TabContext value={value}>
-          {isMobile ? (
-            <Box>
-              <FormControl fullWidth>
-                <TextField
-                  select
-                  value={value}
-                  onChange={handleChange}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                >
-                  {tabData.map((tab, index) => (
-                    <MenuItem key={index} value={(index + 1).toString()}>
-                      {tab.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </FormControl>
-              <TabPanel sx={{ padding: 0 }} value={value}>
-                {tabData[parseInt(value, 10) - 1].component}
-              </TabPanel>
-            </Box>
-          ) : (
-            <>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
-                  {tabData.map((tab, index) => (
-                    <Tab key={index} label={tab.label} value={(index + 1).toString()} />
-                  ))}
-                </TabList>
-              </Box>
-              {tabData.map((tab, index) => (
-                <TabPanel key={index} value={(index + 1).toString()}>
-                  {tab.component}
-                </TabPanel>
-              ))}
-            </>
-          )}
-        </TabContext>
+      {error ? (
+        <ErrorComponent message={error} />
       ) : (
-        <></>
+        tabData.length && (
+          <TabContext value={value}>
+            {isMobile ? (
+              <Box>
+                <FormControl fullWidth>
+                  <TextField
+                    select
+                    value={value}
+                    onChange={handleChange}
+                    displayEmpty
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    {tabData.map((tab, index) => (
+                      <MenuItem key={index} value={(index + 1).toString()}>
+                        {tab.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FormControl>
+                <TabPanel sx={{ padding: 0 }} value={value}>
+                  {tabData[parseInt(value, 10) - 1].component}
+                </TabPanel>
+              </Box>
+            ) : (
+              <>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    {tabData.map((tab, index) => (
+                      <Tab key={index} label={tab.label} value={(index + 1).toString()} />
+                    ))}
+                  </TabList>
+                </Box>
+                {tabData.map((tab, index) => (
+                  <TabPanel key={index} value={(index + 1).toString()}>
+                    {tab.component}
+                  </TabPanel>
+                ))}
+              </>
+            )}
+          </TabContext>
+        )
       )}
     </Box>
   );
@@ -148,7 +151,15 @@ export default function CompanyDetails({
 
   return (
     <>
-      <Accordion>
+      <Accordion
+        sx={{
+          marginTop: '0 !important',
+          marginBottom: '1rem !important',
+          '::before': {
+            display: 'none',
+          },
+        }}
+      >
         <AccordionSummary
           sx={{
             px: 3,

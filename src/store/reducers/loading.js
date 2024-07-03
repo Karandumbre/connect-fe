@@ -21,6 +21,9 @@ const loadingSlice = createSlice({
     stopLoading: (state) => {
       state.isLoading = false;
     },
+    reset: (state) => {
+      state.isLoading = false;
+    },
   },
 });
 

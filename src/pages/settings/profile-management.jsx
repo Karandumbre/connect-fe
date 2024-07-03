@@ -1,29 +1,19 @@
-import * as Yup from 'yup';
+import { useRef } from 'react';
 import { Form, Formik } from 'formik';
-import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 import { Box, Grid, Avatar, Button } from '@mui/material';
 
 import { Heading, Section } from 'src/components';
+import { languages } from 'src/constants/settings.constants';
 
+import { ProfileSchema } from './validation';
+import { InputWithError } from './components';
 import AccountManagement from './account-settings';
-import { Label, CustomTextField as TextField } from './label';
-
-// Validation schema
-const ProfileSchema = Yup.object().shape({
-  firstName: Yup.string().required('First name is required'),
-  lastName: Yup.string().required('Last name is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  preferredLanguage: Yup.string().required('Preferred language is required'),
-  password: Yup.string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    .required('Confirm password is required'),
-});
 
 const ProfileManagement = () => {
+  const user = useSelector((state) => state.user);
+
   const fileInputRef = useRef(null);
   const handleSubmit = (values, actions) => {
     alert(JSON.stringify(values, null, 2));
@@ -39,23 +29,20 @@ const ProfileManagement = () => {
       <Section>
         <Formik
           initialValues={{
-            firstName: '',
-            lastName: '',
-            email: '',
-            preferredLanguage: '',
-            logo: null,
+            ...user,
           }}
+          enableReinitialize
           validationSchema={ProfileSchema}
           onSubmit={handleSubmit}
         >
-          {({ setFieldValue, isSubmitting }) => (
+          {({ setFieldValue, isSubmitting, errors, handleChange }) => (
             <Form>
               <Box sx={{ p: 3, pt: 0 }}>
                 <Heading title="Profile Details" />
                 <Box display="flex" alignItems="center" flexDirection={['column', 'row']}>
                   <Avatar
                     sx={{ width: 90, height: 90, mb: 2 }}
-                    src="/static/mock-images/avatars/avatar_default.jpg"
+                    src={user.logo || '/static/mock-images/avatars/avatar_default.jpg'}
                   />
                   <input
                     ref={fileInputRef}
@@ -80,31 +67,77 @@ const ProfileManagement = () => {
 
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <Label isRequired labelBold>
-                      First name
-                    </Label>
-                    <TextField name="firstName" fullWidth />
+                    <InputWithError
+                      label="First Name"
+                      name="firstName"
+                      errors={errors}
+                      type="text"
+                      onChange={handleChange}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Label isRequired labelBold>
-                      Last name
-                    </Label>
-                    <TextField name="lastName" fullWidth />
+                    <InputWithError
+                      label="Last Name"
+                      name="lastName"
+                      errors={errors}
+                      type="text"
+                      onChange={handleChange}
+                    />
                   </Grid>
                 </Grid>
 
                 <Grid container spacing={2} sx={{ mt: 2 }}>
                   <Grid item xs={12} sm={6}>
-                    <Label isRequired labelBold>
-                      Email address
-                    </Label>
-                    <TextField name="email" fullWidth />
+                    <InputWithError
+                      label="Email"
+                      name="email"
+                      errors={errors}
+                      type="email"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <InputWithError
+                      name="language"
+                      label="Preferred Language"
+                      errors={errors}
+                      type="dropdown"
+                      options={languages}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={12} sm={6}>
+                    <InputWithError
+                      label="Phone"
+                      name="phone"
+                      errors={errors}
+                      type="text"
+                      onChange={handleChange}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Label isRequired labelBold>
-                      Preferred Language
-                    </Label>
-                    <TextField name="preferredLanguage" fullWidth />
+                    <InputWithError
+                      label="Designation"
+                      name="designation"
+                      errors={errors}
+                      type="text"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={12}>
+                    <InputWithError
+                      label="Experience"
+                      name="experience"
+                      errors={errors}
+                      type="text"
+                      onChange={handleChange}
+                    />
                   </Grid>
                 </Grid>
 

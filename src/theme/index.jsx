@@ -11,8 +11,6 @@ import { overrides } from './overrides';
 import { typography } from './typography';
 import { customShadows } from './custom-shadows';
 
-// ----------------------------------------------------------------------
-
 export const ThemeProvider = ({ children }) => {
   const memoizedValue = useMemo(
     () => ({

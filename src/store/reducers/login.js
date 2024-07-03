@@ -37,6 +37,10 @@ const loginSlice = createSlice({
       resetAppUserState();
       state.isLoggedIn = false;
     },
+    reset: (state) => {
+      resetAppUserState();
+      state.isLoggedIn = false;
+    },
   },
 });
 

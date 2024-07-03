@@ -13,7 +13,7 @@ import {
 
 import { PAYMENT_DATA } from 'src/constants/settings.constants';
 
-import { Label, CustomTextField as TextField } from './label';
+import { Label, CustomTextField as TextField } from './components';
 
 export const MarkAsPaid = () => {
   const [open, setOpen] = useState(false);
