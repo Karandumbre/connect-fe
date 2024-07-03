@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { Form, Field, Formik } from 'formik';
 
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import {
+  Stack,
   Dialog,
   Button,
   useTheme,
@@ -13,10 +15,15 @@ import {
   DialogActions,
 } from '@mui/material';
 
+import { useResponsive } from 'src/hooks/use-responsive';
+
+import { signupValidationSchema, companyValidationSchema } from './validation';
+
 function SignUpDialog({ open, onClose }) {
   const [activeStep, setActiveStep] = useState(0);
   const theme = useTheme();
   const maxSteps = 3;
+  const mobileDevice = useResponsive('down', 'sm');
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -26,73 +33,81 @@ function SignUpDialog({ open, onClose }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const getStepContent = (step) => {
+  const getStepContent = ({ step, touched, handleChange, handleBlur, errors }) => {
     switch (step) {
       case 0:
         return (
           <>
-            <TextField
+            <Field
               autoFocus
-              margin="dense"
-              id="country"
+              as={TextField}
+              name="country"
               label="Country"
-              type="text"
-              fullWidth
-              variant="outlined"
+              error={touched.country && Boolean(errors.country)}
+              helperText={touched.country && errors.country}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
-            <TextField
-              margin="dense"
-              id="company-name"
+            <Field
+              as={TextField}
               label="Company Name"
-              type="text"
-              fullWidth
-              variant="outlined"
+              name="companyName"
+              error={touched.companyName && Boolean(errors.companyName)}
+              helperText={touched.companyName && errors.companyName}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </>
         );
       case 1:
         return (
           <>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="first-name"
+            <Field
+              as={TextField}
               label="First Name"
-              type="text"
-              fullWidth
-              variant="outlined"
+              name="firstName"
+              error={touched.firstName && Boolean(errors.firstName)}
+              helperText={touched.firstName && errors.firstName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
             />
             <TextField
-              margin="dense"
-              id="last-name"
+              as={TextField}
               label="Last Name"
-              type="text"
-              fullWidth
-              variant="outlined"
+              name="lastName"
+              error={touched.lastName && Boolean(errors.lastName)}
+              helperText={touched.lastName && errors.lastName}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
             <TextField
-              margin="dense"
-              id="phone"
+              as={TextField}
               label="Phone"
-              type="text"
-              fullWidth
-              variant="outlined"
+              name="phone"
+              error={touched.phone && Boolean(errors.phone)}
+              helperText={touched.phone && errors.phone}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
             <TextField
-              margin="dense"
+              as={TextField}
               id="email"
               label="Email Address"
-              type="email"
-              fullWidth
-              variant="outlined"
+              name="email"
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
             <TextField
-              margin="dense"
-              id="password"
+              as={TextField}
               label="Password"
               type="password"
-              fullWidth
-              variant="outlined"
+              error={touched.password && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </>
         );
@@ -108,15 +123,61 @@ function SignUpDialog({ open, onClose }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
-      <DialogContent>{getStepContent(activeStep)}</DialogContent>
-      <DialogActions sx={{ justifyContent: 'space-between' }}>
-        <Button onClick={activeStep === 0 ? onClose : handleBack} color="primary">
+    <Dialog open={open} onClose={onClose} fullScreen={mobileDevice}>
+      <DialogTitle id="form-dialog-title">Create an account</DialogTitle>
+      <DialogContent
+        sx={{
+          minHeight: '300px',
+        }}
+      >
+        <Formik
+          initialValues={{ email: '', password: '' }}
+          validationSchema={
+            // eslint-disable-next-line no-nested-ternary
+            activeStep === 0
+              ? companyValidationSchema
+              : activeStep === 1
+                ? signupValidationSchema
+                : null
+          }
+          onSubmit={(values, { setSubmitting }) => {
+            console.log(values);
+
+            onClose();
+          }}
+        >
+          {({ isSubmitting, errors, touched, handleChange, handleSubmit, handleBlur }) => (
+            <Form>
+              <Stack spacing={3}>
+                {getStepContent({
+                  step: activeStep,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleSubmit,
+                  handleBlur,
+                })}
+              </Stack>
+            </Form>
+          )}
+        </Formik>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'space-between', pb: 2, px: 3 }}>
+        <Button
+          variant="outlined"
+          type="ghost"
+          onClick={activeStep === 0 ? onClose : handleBack}
+          color="primary"
+        >
           {activeStep > 0 && <KeyboardArrowLeft />}
           {activeStep === 0 ? 'Cancel' : 'Back'}
         </Button>
-        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+        <Button
+          size="small"
+          variant="contained"
+          onClick={handleNext}
+          disabled={activeStep === maxSteps - 1}
+        >
           Next
           {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
         </Button>

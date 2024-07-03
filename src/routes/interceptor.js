@@ -12,7 +12,7 @@ import { LOGIN_ENDPOINT, REFRESH_TOKEN_ENDPOINT } from 'src/constants/api-endpoi
 // Next we make an 'instance' of it
 const instance = axios.create({
   // .. where we make our configurations
-  baseURL: import.meta.env.VITE_REACT_APP_ACCESS_URL,
+  baseURL: process.env.REACT_APP_ACCESS_URL,
 });
 
 // Add a request interceptor
@@ -49,7 +49,7 @@ instance.interceptors.response.use(
             refresh: refreshToken,
           })
           .then((res) => {
-            storageService.setAccessToken(res.data?.access);
+            storageService.setAccessToken(res.data?.token);
             instance.defaults.headers.common.Authorization = `Bearer ${storageService.getAccessToken()}`;
             return instance(originalRequest);
           });

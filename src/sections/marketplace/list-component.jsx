@@ -61,7 +61,7 @@ export default function ListService({ data }) {
   const list2 = data.slice(splitPoint);
 
   return (
-    <Box display="flex">
+    <Box display="flex" flexDirection={['column', 'row']}>
       <RenderList data={list1} />
       <RenderList data={list2} />
     </Box>

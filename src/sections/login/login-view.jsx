@@ -21,13 +21,13 @@ import { useRouter } from 'src/routes/hooks';
 
 import storageService from 'src/utils/storage-service';
 
+import { Logo } from 'src/components/logo';
 import { bgGradient } from 'src/theme/css';
 import { logIn } from 'src/store/reducers/login';
 // reducers
 import { stopLoading, startLoading } from 'src/store/reducers/loading';
 import { LOGIN_ENDPOINT } from 'src/constants/api-endpoints.constants';
 
-import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
 import SignUpDialog from './signup-view';
@@ -43,12 +43,12 @@ const RenderForm = () => {
     dispatch(startLoading);
     postData(LOGIN_ENDPOINT, values)
       .then((res) => {
-        storageService.setToken(res.data);
+        storageService.setToken(res.data.token);
         dispatch(logIn());
         router.push('/home');
       })
       .catch(({ response }) => {
-        enqueueSnackbar(response.data.error, { variant: 'error' });
+        enqueueSnackbar(response.data, { variant: 'error' });
       })
       .finally(() => {
         dispatch(stopLoading);
